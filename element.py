@@ -12,7 +12,7 @@ from landmark import Landmark
 
 class Element(object):
     """Represents the robot and particles"""
-    TOL = 1E-4
+    TOL = 1E-250
 
     def __init__(self, x, y, orien, is_robot=False):
         """pos_x: from left to right
@@ -22,7 +22,7 @@ class Element(object):
         self.pos_x = x
         self.pos_y = y
         self.orientation = orien
-        self.dick_length = 10
+        self.dick_length = 20
         self.is_robot = is_robot
         self.landmarks =[]
         self.set_noise()
@@ -94,6 +94,7 @@ class Element(object):
         """After the motion, update the weight of the particle and its EKFs based on the sensor data"""
         for o in obs:
             prob = np.exp(-70)
+
             if self.landmarks:
                 # find the data association with ML
                 prob, landmark_idx, ass_obs, ass_jacobian, ass_adjcov = self.find_data_association(o)
@@ -102,6 +103,7 @@ class Element(object):
                     self.create_landmark(o)
                 else:
                     # update corresponding EKF
+
                     self.update_landmark(np.transpose(np.array([o])), landmark_idx, ass_obs, ass_jacobian, ass_adjcov)
             else:
                 # no initial landmarks
@@ -114,16 +116,18 @@ class Element(object):
         Given the existing landmarks, generates a random number of obs (distance, direction)
         """
         obs_list = []
-        for i in random.sample(range(len(landmarks)), num_obs):
+        num = 0
+        for i in range(0,len(landmarks)):#random.sample(range(len(landmarks)), num_obs):
             l = landmarks[i].pos()
             # apply distance noise
-            dis = euclidean_distance(l, (self.pos_x, self.pos_y))
             dis = self.sense_distance(l)
 
             # apply angle noise
             direction = self.sense_direction(l)
             obs_list.append((dis, direction))
-            #print "\nrobot %s sees %s with obs %s" % (str(self), str(l),str((dis, direction)))
+            num+=1
+
+        print(num)
         return obs_list
 
     def sense_distance(self, landmark):

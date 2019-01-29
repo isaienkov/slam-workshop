@@ -7,27 +7,27 @@ from element import Element
 
 class Slam(object):
     """Main class that implements the FastSLAM1.0 algorithm"""
-    def __init__(self, x, y, orien, particle_size = 50):
+    def __init__(self, x, y, orien, elements_size = 50):
         self.world = World()
-        self.elements = [Element(x, y, random.random()* 2.*math.pi) for _ in range(particle_size)]
+        self.elements = [Element(x, y, random.random()* 2.*math.pi) for _ in range(elements_size)]
         self.robot = Element(x, y, orien, is_robot=True)
-        self.elements_size = particle_size
+        self.elements_size = elements_size
 
-    def run_simulation(self):
+    def simulate(self):
         while True:
             for event in self.world.pygame.event.get():
                 self.world.test_end(event)
             self.world.clear()
-            key_pressed = self.world.pygame.key.get_pressed()
-            if self.world.move_forward(key_pressed):
+            key = self.world.pygame.key.get_pressed()
+            if self.world.move_forward(key):
                 self.move_forward(2)
                 obs = self.robot.sense(self.world.landmarks, 2)
-                for p in self.elements:
-                    p.update(obs)
+                for element in self.elements:
+                    element.update(obs)
                 self.elements = self.resample_particles()
-            if self.world.turn_left(key_pressed):
+            if self.world.turn_left(key):
                 self.turn_left(5)
-            if self.world.turn_right(key_pressed):
+            if self.world.turn_right(key):
                 self.turn_right(5)
             self.world.render(self.robot, self.elements, self.get_predicted_landmarks())
 
@@ -67,5 +67,5 @@ class Slam(object):
 
 if __name__=="__main__":
     random.seed(5)
-    simulator = Slam(80, 140, 0, particle_size=50)
-    simulator.run_simulation()
+    simulator = Slam(80, 140, 0, elements_size=20)
+    simulator.simulate()
