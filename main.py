@@ -3,15 +3,15 @@ import random
 import math
 from copy import deepcopy
 from world import World
-from element import Element
+from element import Particle
 
 class Slam(object):
     """Main class that implements the FastSLAM1.0 algorithm"""
-    def __init__(self, x, y, orien, elements_size = 50):
+    def __init__(self, x, y, orien, particle_size = 50):
         self.world = World()
-        self.elements = [Element(x, y, random.random()* 2.*math.pi) for _ in range(elements_size)]
-        self.robot = Element(x, y, orien, is_robot=True)
-        self.elements_size = elements_size
+        self.particles = [Particle(x, y, random.random()* 2.*math.pi) for _ in range(particle_size)]
+        self.robot = Particle(x, y, orien, is_robot=True)
+        self.particle_size = particle_size
 
     def simulate(self):
         while True:
@@ -22,50 +22,50 @@ class Slam(object):
             if self.world.move_forward(key):
                 self.move_forward(2)
                 obs = self.robot.sense(self.world.landmarks, 2)
-                for element in self.elements:
-                    element.update(obs)
-                self.elements = self.resample_particles()
+                for particle in self.particles:
+                    particle.update(obs)
+                self.particles = self.resample_particles()
             if self.world.turn_left(key):
                 self.turn_left(5)
             if self.world.turn_right(key):
                 self.turn_right(5)
-            self.world.render(self.robot, self.elements, self.get_predicted_landmarks())
+            self.world.render(self.robot, self.particles, self.get_predicted_landmarks())
 
     def move_forward(self, step):
         self.robot.forward(step)
-        for p in self.elements:
+        for p in self.particles:
             p.forward(step)
 
     def turn_left(self, angle):
         self.robot.turn_left(angle)
-        for p in self.elements:
+        for p in self.particles:
             p.turn_left(angle)
 
     def turn_right(self, angle):
         self.robot.turn_right(angle)
-        for p in self.elements:
+        for p in self.particles:
             p.turn_right(angle)
 
     def resample_particles(self):
         new_particles = []
-        weight = [p.weight for p in self.elements]
-        index = int(random.random() * self.elements_size)
+        weight = [p.weight for p in self.particles]
+        index = int(random.random() * self.particle_size)
         beta = 0.0
         mw = max(weight)
-        for i in range(self.elements_size):
+        for i in range(self.particle_size):
             beta += random.random() * 2.0 * mw
             while beta > weight[index]:
                 beta -= weight[index]
-                index = (index + 1) % self.elements_size
-            new_particle = deepcopy(self.elements[index])
+                index = (index + 1) % self.particle_size
+            new_particle = deepcopy(self.particles[index])
             new_particle.weight = 1
             new_particles.append(new_particle)
         return new_particles
 
     def get_predicted_landmarks(self):
-        return self.elements[0].landmarks
+        return self.particles[0].landmarks
 
 if __name__=="__main__":
     random.seed(5)
-    simulator = Slam(80, 140, 0, elements_size=20)
+    simulator = Slam(80, 140, 0, 100)
     simulator.simulate()

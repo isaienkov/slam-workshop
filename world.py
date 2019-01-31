@@ -7,7 +7,10 @@ import numpy as np
 FPS=80
 WINDOWWIDTH = 600
 WINDOWHEIGHT = 600
-LANDMARKNUMBER = 10
+LANDMARKNUMBER = 8
+seed = 0
+
+np.random.seed(seed)
 
 COLOR = {
     "white": (255, 255, 255),

@@ -10,9 +10,11 @@ from scipy import linalg
 from world import WINDOWWIDTH, WINDOWHEIGHT
 from landmark import Landmark
 
-class Element(object):
+class Particle(object):
     """Represents the robot and particles"""
     TOL = 1E-250
+    RADIUS = 80
+
 
     def __init__(self, x, y, orien, is_robot=False):
         """pos_x: from left to right
@@ -116,18 +118,16 @@ class Element(object):
         Given the existing landmarks, generates a random number of obs (distance, direction)
         """
         obs_list = []
-        num = 0
         for i in range(0,len(landmarks)):#random.sample(range(len(landmarks)), num_obs):
             l = landmarks[i].pos()
             # apply distance noise
             dis = self.sense_distance(l)
 
-            # apply angle noise
-            direction = self.sense_direction(l)
-            obs_list.append((dis, direction))
-            num+=1
+            if dis < self.RADIUS:
+                # apply angle noise
+                direction = self.sense_direction(l)
+                obs_list.append((dis, direction))
 
-        print(num)
         return obs_list
 
     def sense_distance(self, landmark):
