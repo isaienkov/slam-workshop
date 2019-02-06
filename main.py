@@ -6,7 +6,7 @@ from world import World
 from element import Particle
 
 class Slam(object):
-    """Main class that implements the FastSLAM1.0 algorithm"""
+
     def __init__(self, x, y, orien, particle_size = 50):
         self.world = World()
         self.particles = [Particle(x, y, random.random()* 2.*math.pi) for _ in range(particle_size)]
@@ -20,7 +20,7 @@ class Slam(object):
             self.world.clear()
             key = self.world.pygame.key.get_pressed()
             if self.world.move_forward(key):
-                self.move_forward(2)
+                self.move_forward(5)
                 obs = self.robot.sense(self.world.landmarks, 2)
                 for particle in self.particles:
                     particle.update(obs)
@@ -60,6 +60,7 @@ class Slam(object):
             new_particle = deepcopy(self.particles[index])
             new_particle.weight = 1
             new_particles.append(new_particle)
+
         return new_particles
 
     def get_predicted_landmarks(self):
@@ -67,5 +68,5 @@ class Slam(object):
 
 if __name__=="__main__":
     random.seed(5)
-    simulator = Slam(80, 140, 0, 100)
+    simulator = Slam(160, 140, 0, 100)
     simulator.simulate()

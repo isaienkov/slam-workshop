@@ -1,7 +1,3 @@
-"""
-    Implements the particle which has motion model, sensor model and EKFs for landmarks.
-"""
-
 import random
 import math
 import numpy as np
@@ -118,7 +114,7 @@ class Particle(object):
         Given the existing landmarks, generates a random number of obs (distance, direction)
         """
         obs_list = []
-        for i in range(0,len(landmarks)):#random.sample(range(len(landmarks)), num_obs):
+        for i in range(0,len(landmarks)):
             l = landmarks[i].pos()
             # apply distance noise
             dis = self.sense_distance(l)
