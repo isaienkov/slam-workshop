@@ -101,7 +101,6 @@ class Particle(object):
                     self.create_landmark(o)
                 else:
                     # update corresponding EKF
-
                     self.update_landmark(np.transpose(np.array([o])), landmark_idx, ass_obs, ass_jacobian, ass_adjcov)
             else:
                 # no initial landmarks

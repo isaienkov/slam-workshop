@@ -4,6 +4,11 @@ import math
 from copy import deepcopy
 from world import World
 from element import Particle
+import numpy as np
+
+seed = 0
+
+np.random.seed(seed)
 
 class Slam(object):
 
@@ -19,6 +24,23 @@ class Slam(object):
                 self.world.test_end(event)
             self.world.clear()
             key = self.world.pygame.key.get_pressed()
+
+            """
+            state = np.random.randint(1,5)
+            if state <= 3:
+                self.move_forward(4)
+                obs = self.robot.sense(self.world.landmarks, 2)
+                for particle in self.particles:
+                    particle.update(obs)
+                self.particles = self.resample_particles()
+            else:
+                if state == 4:
+                    self.turn_left(5)
+                else:
+                    if state ==5:
+                        self.turn_right(5)
+            """
+
             if self.world.move_forward(key):
                 self.move_forward(5)
                 obs = self.robot.sense(self.world.landmarks, 2)
@@ -29,6 +51,7 @@ class Slam(object):
                 self.turn_left(5)
             if self.world.turn_right(key):
                 self.turn_right(5)
+
             self.world.render(self.robot, self.particles, self.get_predicted_landmarks())
 
     def move_forward(self, step):
@@ -67,6 +90,5 @@ class Slam(object):
         return self.particles[0].landmarks
 
 if __name__=="__main__":
-    random.seed(5)
-    simulator = Slam(160, 140, 0, 100)
+    simulator = Slam(80, 140, 0, 100)
     simulator.simulate()

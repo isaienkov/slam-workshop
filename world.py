@@ -4,7 +4,7 @@ from pygame.locals import *
 from landmark import Landmark
 import numpy as np
 
-FPS=80
+FPS=10
 WINDOWWIDTH = 600
 WINDOWHEIGHT = 600
 LANDMARKNUMBER = 8
